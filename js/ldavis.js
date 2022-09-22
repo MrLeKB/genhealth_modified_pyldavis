@@ -62,14 +62,22 @@ var LDAvis = function(to_select, data_or_file_name, color1, color2) {
     // proportion of area of MDS plot to which the sum of default topic circle areas is set
     var circle_prop = 0.25;
     var word_prop = 0.25;
-
+    
+    //// GenHealth Edited/Addtional Code//////////////////////
     // opacity of topic circles:
     var base_opacity = 0.2,
         highlight_opacity = 0.6;
 
-    // opacity of topic circles:
+    // Thickness of topic circles borders:
     var circle_border = 2,
         highlight_circle_border = 5 ;
+
+
+    const sentiment_colour_step = d3.scaleThreshold()
+            .domain([-1,-0.3,,0.3,1 ])          
+            .range( ["None","#fc8d59","#ffffbf","#99d594"]); // Colour generated from https://colorbrewer2.org/
+    //////////////////////////////////////////////////////////
+
 
     // topic/lambda selection names are specific to *this* vis
     var topic_select = to_select + "-topic";
@@ -399,7 +407,13 @@ var LDAvis = function(to_select, data_or_file_name, color1, color2) {
         points.append("circle")
             .attr("class", "dot")
             .style("opacity", 0.2)
-            .style("fill", color1)
+            //GenHealth Editied/Addtional Code
+            .style("fill", function(d) { 
+                console.log(d)
+                console.log(d.Freq)
+                console.log(d.sentiment_mean)
+                return sentiment_colour_step(d.sentiment_mean)
+            } )
             .attr("r", function(d) {
                 return (Math.sqrt((d.Freq/100)*mdswidth*mdsheight*circle_prop/Math.PI));
             })
@@ -597,7 +611,7 @@ var LDAvis = function(to_select, data_or_file_name, color1, color2) {
             topicLabel.setAttribute("for", topicID);
             topicLabel.setAttribute("style", "font-family: sans-serif; font-size: 14px");
             //topicLabel.innerHTML = "Selected Topic: <span id='" + topicID + "-value'></span>";
-            topicLabel.innerHTML = "Selected Topic test3 : <span id='" + topicID + "-value'></span>";
+            topicLabel.innerHTML = "Selected Topic test2 : <span id='" + topicID + "-value'></span>";
             topicDiv.appendChild(topicLabel);
 
             var topicInput = document.createElement("input");
@@ -1088,7 +1102,7 @@ var LDAvis = function(to_select, data_or_file_name, color1, color2) {
             // go back to original opacity/fill
             circle.style.opacity = base_opacity;
             circle.style.strokeWidth= circle_border;
-            circle.style.fill = color1;
+            //circle.style.fill = color1;
 
             var title = d3.selectAll(to_select + " .bubble-tool")
                 .text("Top-" + R + " Most Salient Terms");
