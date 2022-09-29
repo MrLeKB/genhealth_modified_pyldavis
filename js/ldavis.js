@@ -35,8 +35,8 @@ var LDAvis = function(to_select, data_or_file_name, color1, color2) {
             old: 1,
             current: 1
         },
-        color1 = typeof color1 !=='undefined' ? color1: "#1f77b4", // baseline color for default topic circles and overall term frequencies
-        color2 = typeof color2 !=='undefined' ? color2: "#d62728"; // 'highlight' color for selected topics and term-topic frequencies
+        color1 = typeof color1 !=='undefined' ? color1: "#99d8c9", // baseline color for default topic circles and overall term frequencies
+        color2 = typeof color2 !=='undefined' ? color2: "#2c7fb8"; // 'highlight' color for selected topics and term-topic frequencies
 
     // Set the duration of each half of the transition:
     var duration = 750;
@@ -65,17 +65,23 @@ var LDAvis = function(to_select, data_or_file_name, color1, color2) {
     
     //// GenHealth Edited/Addtional Code//////////////////////
     // opacity of topic circles:
-    var base_opacity = 0.2,
-        highlight_opacity = 0.6;
+    var base_opacity = 0.4,
+        highlight_opacity = 8;
 
     // Thickness of topic circles borders:
     var circle_border = 2,
         highlight_circle_border = 5 ;
 
-
+    var pos_colour = "#99d594"
+    var neu_colour = "#ffffbf"
+    var neg_colour = "#fc8d59"
     const sentiment_colour_step = d3.scaleThreshold()
-            .domain([-1,-0.3,,0.3,1 ])          
-            .range( ["None","#fc8d59","#ffffbf","#99d594"]); // Colour generated from https://colorbrewer2.org/
+            .domain([-1,-0.3,0.3,1 ])          
+            .range( ["None",neg_colour,neu_colour,pos_colour]); // Colour generated from https://colorbrewer2.org/
+
+    // const sentiment_colour_step = d3.scaleThreshold()//Demo purpose only, used sentime_colour_step above for actual sentiment
+    //     .domain([0.5,0.52,0.52,0.54 ])          
+    //     .range( ["None","#fc8d59","#ffffbf","#99d594"]); //
     //////////////////////////////////////////////////////////
 
 
@@ -409,9 +415,6 @@ var LDAvis = function(to_select, data_or_file_name, color1, color2) {
             .style("opacity", 0.2)
             //GenHealth Editied/Addtional Code
             .style("fill", function(d) { 
-                console.log(d)
-                console.log(d.Freq)
-                console.log(d.sentiment_mean)
                 return sentiment_colour_step(d.sentiment_mean)
             } )
             .attr("r", function(d) {
@@ -575,9 +578,10 @@ var LDAvis = function(to_select, data_or_file_name, color1, color2) {
                 state_save(true);
             });
 
+
         var title = chart.append("text")
             .attr("x", barwidth/2)
-            .attr("y", -30)
+            .attr("y", 0)
             .attr("class", "bubble-tool") //  set class so we can remove it when highlight_off is called
             .style("text-anchor", "middle")
             .style("font-size", "16px")
@@ -611,7 +615,7 @@ var LDAvis = function(to_select, data_or_file_name, color1, color2) {
             topicLabel.setAttribute("for", topicID);
             topicLabel.setAttribute("style", "font-family: sans-serif; font-size: 14px");
             //topicLabel.innerHTML = "Selected Topic: <span id='" + topicID + "-value'></span>";
-            topicLabel.innerHTML = "Selected Topic test2 : <span id='" + topicID + "-value'></span>";
+            topicLabel.innerHTML = "Selected Topic test2: <span id='" + topicID + "-value'></span>";
             topicDiv.appendChild(topicLabel);
 
             var topicInput = document.createElement("input");
@@ -649,46 +653,46 @@ var LDAvis = function(to_select, data_or_file_name, color1, color2) {
             lambdaDiv.setAttribute("style", "padding: 5px; background-color: #e8e8e8; display: inline-block; height: 50px; width: " + lambdaDivWidth + "px; float: right; margin-right: 30px");
             inputDiv.appendChild(lambdaDiv);
 
-            var lambdaZero = document.createElement("div");
-            lambdaZero.setAttribute("style", "padding: 5px; height: 20px; width: 220px; font-family: sans-serif; float: left");
-            lambdaZero.setAttribute("id", lambdaZeroID);
-            lambdaDiv.appendChild(lambdaZero);
-            var xx = d3.select("#" + lambdaZeroID)
-                .append("text")
-                .attr("x", 0)
-                .attr("y", 0)
-                .style("font-size", "14px")
-                .text("Slide to adjust relevance metric:");
-            var yy = d3.select("#" + lambdaZeroID)
-                .append("text")
-                .attr("x", 125)
-                .attr("y", -5)
-                .style("font-size", "10px")
-                .style("position", "absolute")
-                .text("(2)");
+            // var lambdaZero = document.createElement("div");
+            // lambdaZero.setAttribute("style", "padding: 5px; height: 20px; width: 220px; font-family: sans-serif; float: left");
+            // lambdaZero.setAttribute("id", lambdaZeroID);
+            // lambdaDiv.appendChild(lambdaZero);
+            // var xx = d3.select("#" + lambdaZeroID)
+            //     .append("text")
+            //     .attr("x", 0)
+            //     .attr("y", 0)
+            //     .style("font-size", "14px")
+            //     .text("Slide to adjust relevance metric:");
+            // var yy = d3.select("#" + lambdaZeroID)
+            //     .append("text")
+            //     .attr("x", 125)
+            //     .attr("y", -5)
+            //     .style("font-size", "10px")
+            //     .style("position", "absolute")
+            //     .text("(2)");
 
-            var sliderDiv = document.createElement("div");
-            sliderDiv.setAttribute("id", sliderDivID);
-            sliderDiv.setAttribute("style", "padding: 5px; height: 40px; width: 250px; float: right; margin-top: -5px; margin-right: 10px");
-            lambdaDiv.appendChild(sliderDiv);
+            // var sliderDiv = document.createElement("div");
+            // sliderDiv.setAttribute("id", sliderDivID);
+            // sliderDiv.setAttribute("style", "padding: 5px; height: 40px; width: 250px; float: right; margin-top: -5px; margin-right: 10px");
+            // lambdaDiv.appendChild(sliderDiv);
 
-            var lambdaInput = document.createElement("input");
-            lambdaInput.setAttribute("style", "width: 250px; margin-left: 0px; margin-right: 0px");
-            lambdaInput.type = "range";
-            lambdaInput.min = 0;
-            lambdaInput.max = 1;
-            lambdaInput.step = data['lambda.step'];
-            lambdaInput.value = vis_state.lambda;
-            lambdaInput.id = lambdaID;
-            lambdaInput.setAttribute("list", "ticks"); // to enable automatic ticks (with no labels, see below)
-            sliderDiv.appendChild(lambdaInput);
+            // var lambdaInput = document.createElement("input");
+            // lambdaInput.setAttribute("style", "width: 250px; margin-left: 0px; margin-right: 0px");
+            // lambdaInput.type = "range";
+            // lambdaInput.min = 0;
+            // lambdaInput.max = 1;
+            // lambdaInput.step = data['lambda.step'];
+            // lambdaInput.value = vis_state.lambda;
+            // lambdaInput.id = lambdaID;
+            // lambdaInput.setAttribute("list", "ticks"); // to enable automatic ticks (with no labels, see below)
+            // sliderDiv.appendChild(lambdaInput);
 
-            var lambdaLabel = document.createElement("label");
-            lambdaLabel.setAttribute("id", lambdaLabelID);
-            lambdaLabel.setAttribute("for", lambdaID);
-            lambdaLabel.setAttribute("style", "height: 20px; width: 60px; font-family: sans-serif; font-size: 14px; margin-left: 80px");
-            lambdaLabel.innerHTML = "&#955 = <span id='" + lambdaID + "-value'>" + vis_state.lambda + "</span>";
-            lambdaDiv.appendChild(lambdaLabel);
+            // var lambdaLabel = document.createElement("label");
+            // lambdaLabel.setAttribute("id", lambdaLabelID);
+            // lambdaLabel.setAttribute("for", lambdaID);
+            // lambdaLabel.setAttribute("style", "height: 20px; width: 60px; font-family: sans-serif; font-size: 14px; margin-left: 80px");
+            // lambdaLabel.innerHTML = "&#955 = <span id='" + lambdaID + "-value'>" + vis_state.lambda + "</span>";
+            // lambdaDiv.appendChild(lambdaLabel);
 
             // Create the svg to contain the slider scale:
             var scaleContainer = d3.select("#" + sliderDivID).append("svg")
@@ -995,11 +999,85 @@ var LDAvis = function(to_select, data_or_file_name, color1, color2) {
             var text = d3.select(to_select + " .bubble-tool");
             text.remove();
 
+          
+            d3.selectAll("g.stackedbar").remove()
+            //GenHealth Editied/Additional Code////////////////////////////
+            
+            var stack = [
+                {name: "Positive", color: pos_colour, value: d.sentiment_pos, startValue: 0, endValue: d.sentiment_pos},
+                {name: "Neutral", color: neu_colour, value: d.sentiment_neu, startValue: d.sentiment_pos, endValue: d.sentiment_pos+d.sentiment_neu},
+                {name: "Negative", color: neg_colour, value: d.sentiment_neg, startValue: d.sentiment_pos+d.sentiment_neu, endValue: 1}
+            ]
+            
+            // d3.select("#" + barFreqsID)
+            //     .append("g")
+            //     .attr("x", 0)
+            //     .attr("y",-30)
+            //     .attr("class", "stackedbar")
+            //     .attr("width", barwidth)
+            //     .attr("height", 20)
+            //     .attr("opacity", 0.4)
+            //     .attr('fill', '#000000');
+            var stackedBarScale = d3.scaleLinear([0, 1], [0, barwidth])
+            var formatPercent = stackedBarScale.tickFormat(null, "%")
+            d3.select("#" + barFreqsID)
+                .append("g")
+                .attr("class", "stackedbar")
+                .attr("stroke", "black")
+                    .selectAll("rect")
+                    .data(stack)
+                    .join("rect")
+                        .attr("x", d => stackedBarScale(d.startValue))
+                        .attr("y", -40)
+                        .attr("width", d => stackedBarScale(d.endValue) - stackedBarScale(d.startValue))
+                        .attr("height", 20)
+                        .attr("opacity", 1)
+                        .attr('fill', d=>d.color)
+                    .append("text")
+                        .attr("x", d => stackedBarScale(d.startValue))
+                        .attr("y", -40)
+                        .text(d => `${d.name}`);
+
+            // d3.select("#" + barFreqsID)
+            //     .append("g")
+            //     .attr("class", "stackedbar")
+            //     .attr("font-family", "sans-serif")
+            //     .attr("font-size", 12)
+            //         .selectAll("text")
+            //         .data(stack)
+            //         .join("text")
+            //             .attr("fill", "#000000")
+            //             .attr("x", d => x(d.startValue+(d.endValue-d.startValue)/2))
+            //             .attr("y", -45)
+            //             .style("text-anchor", "middle")
+            //             .attr("font-weight", "bold")
+            //             .text(d => d.name)
+
+             d3.select("#" + barFreqsID)
+                .append("g")
+                .attr("class", "stackedbar")
+                .attr("font-family", "sans-serif")
+                .attr("font-size", 12)
+                    .selectAll("text")
+                    .data(stack)
+                    .join("text")
+                        .attr("fill", "#000000")
+                        .style("text-anchor", "middle")
+                        .attr("x", d => stackedBarScale(d.startValue+(d.endValue-d.startValue)/2))
+                        .call(text => text.append("tspan")
+                            .attr("y", -42)                      
+                            .attr("font-weight", "bold")
+                            .text(d => d.name))
+                        .call(text => text.append("tspan")
+                            .attr("x", d => stackedBarScale(d.startValue+(d.endValue-d.startValue)/2))
+                            .attr("y", -27.5)
+                            .text(d =>formatPercent(d.value)));
+
             // append text with info relevant to topic of interest
             d3.select("#" + barFreqsID)
                 .append("text")
                 .attr("x", barwidth/2)
-                .attr("y", -30)
+                .attr("y", 0)
                 .attr("class", "bubble-tool") //  set class so we can remove it when highlight_off is called
                 .style("text-anchor", "middle")
                 .style("font-size", "16px")
@@ -1113,6 +1191,11 @@ var LDAvis = function(to_select, data_or_file_name, color1, color2) {
 
             // remove the red bars
             d3.selectAll(to_select + " .overlay").remove();
+
+            //GenHealth Code/////////////////////////
+            // remove stacked bar
+            d3.selectAll("g.stackedbar").remove()
+            //////////////////
 
             // go back to 'default' bar chart
             var dat2 = lamData.filter(function(d) {
